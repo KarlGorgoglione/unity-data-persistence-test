@@ -5,14 +5,11 @@ using UnityEngine.SceneManagement;
 using UnityEngine.UI;
 using TMPro;
 using System.IO;
+using static DataManager;
 
 public class MainManager : MonoBehaviour
 {
-    class Score
-    {
-        public int score;
-        public string username;
-    }
+
 
 
     public Brick BrickPrefab;
@@ -35,7 +32,7 @@ public class MainManager : MonoBehaviour
     // Start is called before the first frame update
     void Start()
     {
-        loadScore();
+        loadHighestScore();
         HighestScoreText.text = highestScore != null ? $"Highest Score : {highestScore.score} by {highestScore.username}" : "No Score yet";
         const float step = 0.6f;
         int perLine = Mathf.FloorToInt(4.0f / step);
@@ -88,28 +85,21 @@ public class MainManager : MonoBehaviour
     {
         m_GameOver = true;
         GameOverText.SetActive(true);
-        if (highestScore == null || m_Points > highestScore.score) saveScore();
+        if (highestScore == null || m_Points > highestScore.score) DataManager.Instance.saveScore(m_Points);
     }
 
 
-    public void saveScore()
+
+
+    public void loadHighestScore()
     {
-        Score data = new Score();
-        data.score = m_Points;
-        data.username = DataManager.Instance.Username;
+        List<Score> scores = DataManager.Instance.scores;
 
-        string json = JsonUtility.ToJson(data);
-        File.WriteAllText(Application.persistentDataPath + "/highestScore.json", json);
+        if (scores.Count == 0) return;
+
+        scores.Sort((elem1, elem2) => elem1.score.CompareTo(elem2.score));
+        highestScore = scores[0];
     }
 
-    public void loadScore()
-    {
-        string path = Application.persistentDataPath + "/highestScore.json";
-        if (File.Exists(path))
-        {
-            string json = File.ReadAllText(path);
-            Score data = JsonUtility.FromJson<Score>(json);
-            highestScore = data;
-        }
-    }
+
 }

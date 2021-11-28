@@ -1,6 +1,7 @@
 using System.Collections;
 using System.Collections.Generic;
 using UnityEngine;
+using UnityEngine.SceneManagement;
 
 public class UIHandler : MonoBehaviour
 {
@@ -14,5 +15,17 @@ public class UIHandler : MonoBehaviour
     void Update()
     {
         
+    }
+
+    public void StartGame()
+    {
+        DataManager.Instance.FetchScores();
+        SceneManager.LoadScene(1);
+    }
+
+    public void ShowLeaderboard()
+    {
+        DataManager.Instance.FetchScores();
+        SceneManager.LoadScene(2);
     }
 }

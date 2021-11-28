@@ -6,9 +6,24 @@ using UnityEngine.SceneManagement;
 
 public class DataManager : MonoBehaviour
 {
+    [System.Serializable]
+    class SaveData
+    {
+        public string Username;
+    }
+
+    [System.Serializable]
+    public class Score
+    {
+        public int score;
+        public string username;
+    }
+
     public static DataManager Instance;
 
     public string Username;
+
+    public List<Score> scores;
 
     private void Awake()
     {
@@ -17,24 +32,8 @@ public class DataManager : MonoBehaviour
             Instance = this;
         }
 
+
         DontDestroyOnLoad(gameObject);
-    }
-    // Start is called before the first frame update
-    void Start()
-    {
-        
-    }
-
-    // Update is called once per frame
-    void Update()
-    {
-        
-    }
-
-    [System.Serializable]
-    class SaveData
-    {
-        public string Username;
     }
 
     public void setUsername(string username)
@@ -62,8 +61,31 @@ public class DataManager : MonoBehaviour
         }
     }
 
-    public void StartGame()
+    public void FetchScores()
     {
-        SceneManager.LoadScene(1);
+        string path = Application.persistentDataPath + "/scores.json";
+        if (File.Exists(path))
+        {
+            string json = File.ReadAllText(path);
+            scores = JsonUtility.FromJson<List<Score>>(json);
+        }
+        else
+        {
+            scores = new List<Score>();
+        }
     }
+
+    public void saveScore(int score)
+    {
+        Score data = new Score();
+        data.score = score;
+        data.username = DataManager.Instance.Username;
+
+        scores.Add(data);
+
+        string json = JsonUtility.ToJson(scores);
+        File.WriteAllText(Application.persistentDataPath + "/scores.json", json);
+    }
+
+
 }
