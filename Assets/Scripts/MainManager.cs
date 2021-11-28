@@ -85,11 +85,8 @@ public class MainManager : MonoBehaviour
     {
         m_GameOver = true;
         GameOverText.SetActive(true);
-        if (highestScore == null || m_Points > highestScore.score) DataManager.Instance.saveScore(m_Points);
+        DataManager.Instance.saveScore(m_Points);
     }
-
-
-
 
     public void loadHighestScore()
     {
@@ -97,7 +94,7 @@ public class MainManager : MonoBehaviour
 
         if (scores.Count == 0) return;
 
-        scores.Sort((elem1, elem2) => elem1.score.CompareTo(elem2.score));
+        scores.Sort((elem1, elem2) => elem2.score.CompareTo(elem1.score));
         highestScore = scores[0];
     }
 

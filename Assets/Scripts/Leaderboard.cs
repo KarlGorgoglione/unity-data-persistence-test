@@ -17,14 +17,14 @@ public class Leaderboard : MonoBehaviour
     {
         canvas = GetComponent<Canvas>();
         List<Score> scores = DataManager.Instance.scores;
-        scores.Sort((elem1, elem2) => elem1.score.CompareTo(elem2.score));
+        scores.Sort((elem1, elem2) => elem2.score.CompareTo(elem1.score));
         Debug.Log(scores[0].username);
         int i = 1;
-        foreach (Score score in scores)
+        foreach (Score score in scores.GetRange(0, scores.Count > 8 ? 8 : scores.Count))
         {
-            Instantiate(scorePrefab, scorePrefab.rectTransform.position, scorePrefab.rectTransform.rotation);
-            scorePrefab.transform.parent = canvas.transform;
-            scorePrefab.text = $"{i}- {score.username} : {score.score}";
+            TextMeshProUGUI scoreText = Instantiate(scorePrefab, new Vector3(-225 , 125 - (i * 40), 0), scorePrefab.rectTransform.rotation);
+            scoreText.transform.SetParent(canvas.transform, false);
+            scoreText.text = $"{i}- {score.username} : {score.score}";
             i++;
         }
     }

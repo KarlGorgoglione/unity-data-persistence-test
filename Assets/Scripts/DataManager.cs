@@ -3,6 +3,7 @@ using System.Collections.Generic;
 using UnityEngine;
 using System.IO;
 using UnityEngine.SceneManagement;
+using Newtonsoft.Json;
 
 public class DataManager : MonoBehaviour
 {
@@ -64,10 +65,12 @@ public class DataManager : MonoBehaviour
     public void FetchScores()
     {
         string path = Application.persistentDataPath + "/scores.json";
+        Debug.Log(path);
         if (File.Exists(path))
         {
             string json = File.ReadAllText(path);
-            scores = JsonUtility.FromJson<List<Score>>(json);
+            Debug.Log(json);
+            scores = JsonConvert.DeserializeObject<List<Score>>(json);
         }
         else
         {
@@ -79,11 +82,12 @@ public class DataManager : MonoBehaviour
     {
         Score data = new Score();
         data.score = score;
-        data.username = DataManager.Instance.Username;
+        data.username = Username;
 
         scores.Add(data);
 
-        string json = JsonUtility.ToJson(scores);
+        string json = JsonConvert.SerializeObject(scores);
+        Debug.Log(json);
         File.WriteAllText(Application.persistentDataPath + "/scores.json", json);
     }
 
